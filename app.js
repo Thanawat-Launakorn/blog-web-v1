@@ -47,9 +47,7 @@ app.get('/posts/:titlename', (req, res) => {
   const reqTitle = _.lowerCase(req.params.titlename)
 
   posts.forEach((post) => {
-    if (_.lowerCase(post.title) === reqTitle) {
-      res.render('post', {title: post.title, post: post.post})
-    }
+    _.lowerCase(post.title) === reqTitle ? res.render('post', { title: post.title, post: post.post }) : undefined
   })
 
 })

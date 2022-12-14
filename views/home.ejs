@@ -9,9 +9,12 @@
         </h1>
 
         <p>
-            <%= ele.post.slice(0, 100) + " ..." %> 
-            <a href="/posts/<%=ele.title %>">Read More</a>
+            <%= ele.post.slice(0, 100) + " ..." %>
+                <a href="/posts/<%=ele.title %>">Read More</a>
         </p>
 
+
         <%}) %>
+            <button class="btn btn-primary"><a href="/compose" style="color: #fff; text-decoration: none;">Create</a></button>
+
             <%- include('partials/footer') %>
