@@ -1,7 +1,14 @@
-<%- include('partials/header') %> 
-    <h1> <%= title  %> </h1>
-    <p> <%= post %> </p>
-    <button class="btn btn-danger" onclick="history.back()">Back</button>
-<%- include('partials/footer') %> 
+<%- include('partials/header') %>
+    <h1>
+        <%= title %>
+    </h1>
+    <p>
+        <%= post %>
+    </p>
+    
+    <button class="btn btn-danger" onclick="history.back()" style="float: left; margin-right: 10px;">Back</button>
 
- 
+    <form action="/delete" method="post">
+        <button class="btn btn-warning" name="deleteId" value="<%=title%>" type="submit">Delete</button>
+    </form>
+    <%- include('partials/footer') %>

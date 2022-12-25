@@ -1,5 +1,5 @@
 //jshint esversion:6
-
+const mongoose = require('mongoose')
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -10,14 +10,26 @@ let contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhonc
 
 const app = express();
 
-let posts = []
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+mongoose.connect("mongodb://localhost:27017/blogDB", { useNewUrlParser: true })
+
+const postSchema = {
+  title: String,
+  post: String
+}
+
+const Post = mongoose.model("Post", postSchema)
+
 app.get('/', (req, res) => {
-  res.render('home', { homeContent: homeStartingContent, posts })
+  Post.find({}, (err, foundPosts) => {
+    if (!err) {
+      res.render('home', { homeContent: homeStartingContent, posts: foundPosts })
+    }
+  })
 
 })
 
@@ -34,20 +46,33 @@ app.get('/compose', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  const post = {
-    title: req.body.titlevalue,
-    post: req.body.postvalue
-  }
+  const titleValue = _.capitalize(req.body.titlevalue)
+  const postValue = req.body.postvalue
 
-  posts.push(post)
+  const postItem = new Post({
+    title: titleValue,
+    post: postValue
+  })
+  postItem.save()
   res.redirect('/')
 })
 
-app.get('/posts/:titlename', (req, res) => {
-  const reqTitle = _.lowerCase(req.params.titlename)
+app.post('/delete', (req, res) => {
+  const deleteTitle = req.body.deleteId
+  Post.deleteOne({ title: deleteTitle }, (err) => {
+    err ? console.log(err) : res.redirect('/')
+  })
+})
 
-  posts.forEach((post) => {
-    _.lowerCase(post.title) === reqTitle ? res.render('post', { title: post.title, post: post.post }) : undefined
+app.get('/posts/:titlename', (req, res) => {
+
+  const reqTitle = req.params.titlename
+  Post.find({ title: reqTitle }, (err, foundPost) => {
+    if (!err) {
+      foundPost.forEach((found) => {
+        res.render('post', { title: found.title, post: found.post })
+      })
+    }
   })
 
 })
